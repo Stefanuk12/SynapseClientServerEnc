@@ -8,7 +8,7 @@ import { Keys } from "./exch.js"
 export const Router = express.Router()
 
 // Uses secretbox to decrypt a message and then return it reversed
-Router.get("/sb", (req, res) => {
+Router.post("/sb", (req, res) => {
     // Make sure IP not already registered
     const Key = Keys.find(key => key.IP == req.ip)
     if (!Key)
