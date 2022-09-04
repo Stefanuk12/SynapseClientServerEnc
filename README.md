@@ -1,0 +1,2 @@
+# Synapse Client-Server Encryption
+This project is a demo to demonstrate how to perform a "key exchange" between Synapse (v3) and a server. This allows you to send encrypted messages between client and server.
