@@ -15,9 +15,10 @@ Router.post("/sb", (req, res) => {
         return res.status(400).send("not registered")
 
     // Decrypt
+    const DecodedBody = Buffer.from(req.body, "base64").toString()
     const BufferKey = Buffer.from(Key.Key)
     const Nonce = KeyPair.publicKey
-    const Message: string = crypto_secretbox_open_easy(req.body, Nonce, BufferKey).toString()
+    const Message: string = crypto_secretbox_open_easy(DecodedBody, Nonce, BufferKey).toString()
 
     // Success, return string reversed
     return res.send(Message.split("").reverse().join(""))
