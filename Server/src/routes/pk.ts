@@ -7,5 +7,5 @@ export const Router = express.Router()
 
 // Returns our public key
 Router.get("/pk", (req, res) => {
-    return res.send(KeyPair.privateKey.toString())
+    return res.send(KeyPair.publicKey.toString())
 })
