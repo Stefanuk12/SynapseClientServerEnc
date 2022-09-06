@@ -1,7 +1,6 @@
 // Dependencies
 import express from "express"
-import { crypto_secretbox_open_easy } from "libsodium-wrappers"
-import { KeyPair } from "../index.js"
+import { crypto_box_NONCEBYTES, crypto_secretbox_open_easy } from "libsodium-wrappers"
 import { Keys } from "./exch.js"
 
 // Create app
@@ -15,10 +14,11 @@ Router.post("/sb", (req, res) => {
         return res.status(400).send("not registered")
 
     // Decrypt
-    const DecodedBody = Buffer.from(req.body, "base64").toString()
+    const DecodedBody = Buffer.from(req.body, "base64")
     const BufferKey = Buffer.from(Key.Key)
-    const Nonce = KeyPair.publicKey
-    const Message: string = crypto_secretbox_open_easy(DecodedBody, Nonce, BufferKey).toString()
+    const Nonce = DecodedBody.subarray(0, crypto_box_NONCEBYTES)
+    const CipherText = DecodedBody.subarray(crypto_box_NONCEBYTES)
+    const Message: string = crypto_secretbox_open_easy(CipherText, Nonce, BufferKey).toString()
 
     // Success, return string reversed
     return res.send(Message.split("").reverse().join(""))
