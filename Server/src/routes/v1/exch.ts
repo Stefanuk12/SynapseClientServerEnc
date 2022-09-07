@@ -8,6 +8,7 @@ const { crypto_box_seal_open } = _sodium
 
 // Create app
 export const Router = express.Router()
+Router.use(express.text())
 
 // Vars
 interface Key {
@@ -23,7 +24,9 @@ Router.post("/", (req, res) => {
         return res.status(400).send("already registered")
 
     // Decrypt
-    const DecryptedKey = crypto_box_seal_open(req.body, KeyPair.publicKey, KeyPair.privateKey).toString()
+    const CipherText = Buffer.from(req.body, "base64")
+    console.log(CipherText)
+    const DecryptedKey = crypto_box_seal_open(CipherText, KeyPair.publicKey, KeyPair.privateKey).toString()
 
     // Store
     Keys.push({

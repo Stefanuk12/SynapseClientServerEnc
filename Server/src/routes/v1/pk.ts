@@ -7,5 +7,5 @@ export const Router = express.Router()
 
 // Returns our public key
 Router.get("/", (req, res) => {
-    return res.send(KeyPair.publicKey.toString())
+    return res.send(Buffer.from(KeyPair.publicKey).toString("base64"))
 })

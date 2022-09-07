@@ -9,6 +9,7 @@ import { Keys } from "./exch.js"
 
 // Create app
 export const Router = express.Router()
+Router.use(express.text())
 
 // Uses secretbox to decrypt a message and then return it reversed
 Router.post("/", (req, res) => {

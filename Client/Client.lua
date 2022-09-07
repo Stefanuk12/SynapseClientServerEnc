@@ -9,22 +9,26 @@ local ServerConfiguration = {
 }
 
 -- // Grabs the server public key
-local URLFormat = "https://%s:3000/v1/%s"
+local URLFormat = "http://%s:3000/v1/%s"
 local ServerPK = syn.request({
     Method = "GET",
     Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.PublicKey)
 }).Body
+ServerPK = syn.crypt.base64.decode(ServerPK)
 
 -- // Generate our shared key with 256 bit length
-local Key = syn.crypt.random(256)
+local Key = syn.crypt.random(32)
 
 -- // Seal our key
-local SealedKey = syn.crypt.seal.encrypt(Key, ServerPK)
+local SealedKey = syn.crypt.base64.encode(syn.crypt.seal.encrypt(Key, ServerPK))
 
 -- // Send the key to the server
 syn.request({
     Method = "POST",
     Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.KeyExchange),
+    Headers = {
+        ["Content-Type"] = "text/plain"
+    },
     Body = SealedKey
 })
 
