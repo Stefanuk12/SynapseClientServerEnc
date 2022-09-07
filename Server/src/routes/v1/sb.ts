@@ -2,6 +2,7 @@
 import express from "express"
 
 import _sodium from "libsodium-wrappers"
+import { SynapseOnly } from "../../index.js"
 await _sodium.ready
 const { crypto_box_NONCEBYTES, crypto_secretbox_open_easy } = _sodium
 
@@ -10,6 +11,7 @@ import { Keys } from "./exch.js"
 // Create app
 export const Router = express.Router()
 Router.use(express.text())
+Router.use(SynapseOnly)
 
 // Uses secretbox to decrypt a message and then return it reversed
 Router.post("/", (req, res) => {

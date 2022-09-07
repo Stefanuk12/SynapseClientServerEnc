@@ -2,10 +2,12 @@
 import express from "express"
 import { Keys } from "./exch.js"
 import * as crypto from "crypto"
+import { SynapseOnly } from "../../index.js"
 
 // Create app
 export const Router = express.Router()
 Router.use(express.json())
+Router.use(SynapseOnly)
 
 // Decrypt an AES-encrypted message and return it reversed
 Router.post("/", (req, res) => {

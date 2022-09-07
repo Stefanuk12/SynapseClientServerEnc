@@ -1,6 +1,6 @@
 // Dependencies
 import express from "express"
-import { KeyPair } from "../../index.js"
+import { KeyPair, SynapseOnly } from "../../index.js"
 
 import _sodium from "libsodium-wrappers"
 await _sodium.ready
@@ -9,6 +9,7 @@ const { crypto_box_seal_open } = _sodium
 // Create app
 export const Router = express.Router()
 Router.use(express.text())
+Router.use(SynapseOnly)
 
 // Vars
 interface Key {
