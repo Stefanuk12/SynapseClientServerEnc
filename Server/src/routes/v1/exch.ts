@@ -17,7 +17,7 @@ interface Key {
 export const Keys: Key[] = []
 
 // Exchange a shared key to use
-Router.post("/exch", (req, res) => {
+Router.post("/", (req, res) => {
     // Make sure IP not already registered
     if (Keys.find(key => key.IP == req.ip))
         return res.status(400).send("already registered")

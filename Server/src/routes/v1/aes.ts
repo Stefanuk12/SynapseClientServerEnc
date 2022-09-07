@@ -8,7 +8,7 @@ export const Router = express.Router()
 Router.use(express.json())
 
 // Decrypt an AES-encrypted message and return it reversed
-Router.post("/aes", (req, res) => {
+Router.post("/", (req, res) => {
     // Make sure IP not already registered
     const Key = Keys.find(key => key.IP == req.ip)
     if (!Key)

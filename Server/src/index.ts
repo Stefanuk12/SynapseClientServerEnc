@@ -36,7 +36,7 @@ async function AddRoutes(dirPath: URL = DefaultPath){
         // Figure out the paths and import
         let router = await import(urlPath.href)
         let appPath = urlPath.pathname
-        appPath = appPath.substring(appPath.indexOf("routes/") + 6)
+        appPath = appPath.substring(appPath.indexOf("routes/") + 6, appPath.indexOf(".js"))
 
         // Load and output
         App.use(appPath, router.Router)
