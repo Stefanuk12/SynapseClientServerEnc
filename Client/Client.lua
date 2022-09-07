@@ -1,7 +1,7 @@
 local HttpService = game:GetService("HttpService")
 -- // Vars
 local ServerConfiguration = {
-    Host = "example.com",
+    Host = "localhost",
     PublicKey = "pk", -- // the path to the public key (on server)
     KeyExchange = "exch", -- // Endpoint for key exchange
     SBTest = "sb",
