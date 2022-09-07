@@ -1,6 +1,10 @@
 // Dependencies
 import express from "express"
-import { crypto_box_NONCEBYTES, crypto_secretbox_open_easy } from "libsodium-wrappers"
+
+import _sodium from "libsodium-wrappers"
+await _sodium.ready
+const { crypto_box_NONCEBYTES, crypto_secretbox_open_easy } = _sodium
+
 import { Keys } from "./exch.js"
 
 // Create app

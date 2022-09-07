@@ -1,6 +1,6 @@
 // Dependencies
 import express from "express"
-import { KeyPair } from "../index.js"
+import { KeyPair } from "../../index.js"
 
 // Create app
 export const Router = express.Router()

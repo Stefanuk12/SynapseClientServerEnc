@@ -9,7 +9,7 @@ local ServerConfiguration = {
 }
 
 -- // Grabs the server public key
-local URLFormat = "https://%s/%s"
+local URLFormat = "https://%s/v1/%s"
 local ServerPK = syn.request({
     Method = "GET",
     Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.PublicKey)
