@@ -13,7 +13,7 @@ Router.use(SynapseOnly)
 
 // Vars
 interface Key {
-    Key: string
+    Key: Uint8Array
     IP: string
 }
 export const Keys: Key[] = []
@@ -25,10 +25,11 @@ Router.post("/", (req, res) => {
         return res.status(400).send("already registered")
 
     // Decrypt
+    console.log(req.body)
     const CipherText = Buffer.from(req.body, "base64")
-    let DecryptedKey 
+    let DecryptedKey: Uint8Array 
     try {
-        DecryptedKey = crypto_box_seal_open(CipherText, KeyPair.publicKey, KeyPair.privateKey).toString()
+        DecryptedKey = crypto_box_seal_open(CipherText, KeyPair.publicKey, KeyPair.privateKey)
     } catch (e: any) {
         return res.status(400).send(e.message)
     }

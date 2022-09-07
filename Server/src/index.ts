@@ -15,7 +15,7 @@ export const DefaultPath = new URL("./routes/", import.meta.url)
 
 // Generate our public, private key pair
 export const KeyPair = crypto_box_keypair()
-
+console.log(Buffer.from(KeyPair.privateKey).toString("base64"))
 // Add routes
 async function AddRoutes(dirPath: URL = DefaultPath){
     // Loop through directory

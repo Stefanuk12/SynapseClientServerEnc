@@ -4,7 +4,7 @@ import express from "express"
 import _sodium from "libsodium-wrappers"
 import { SynapseOnly } from "../../index.js"
 await _sodium.ready
-const { crypto_box_NONCEBYTES, crypto_secretbox_open_easy } = _sodium
+const { crypto_box_NONCEBYTES, crypto_secretbox_open_easy, crypto_secretbox_easy } = _sodium
 
 import { Keys } from "./exch.js"
 
@@ -22,11 +22,14 @@ Router.post("/", (req, res) => {
 
     // Decrypt
     const DecodedBody = Buffer.from(req.body, "base64")
-    const BufferKey = Buffer.from(Key.Key)
     const Nonce = DecodedBody.subarray(0, crypto_box_NONCEBYTES)
     const CipherText = DecodedBody.subarray(crypto_box_NONCEBYTES)
-    const Message: string = crypto_secretbox_open_easy(CipherText, Nonce, BufferKey).toString()
+    const Message: string = crypto_secretbox_open_easy(CipherText, Nonce, Key.Key, "text")
+
+    // Reverse it, encrypt and send
+    const Reversed = Message.split("").reverse().join("")
+    const Encrypted = crypto_secretbox_easy(Reversed, Nonce, Key.Key, "base64")
 
     // Success, return string reversed
-    return res.send(Message.split("").reverse().join(""))
+    return res.send(Encrypted)
 })

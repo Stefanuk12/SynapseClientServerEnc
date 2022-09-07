@@ -27,7 +27,7 @@ rconsoleinfo(Formatting.GotServerPK:format(_ServerPK, ServerPK))
 local Key = syn.crypt.random(32)
 
 -- // Seal our key
-local SealedKey = syn.crypt.base64.encode(syn.crypt.seal.encrypt(Key, ServerPK))
+local SealedKey = syn.crypt.seal.encrypt(Key, ServerPK)
 
 -- // Send the key to the server
 local ExchangeResponse = syn.request({
@@ -54,6 +54,9 @@ local function SendEncryptedSB(Message, AdditionalData)
     local Response = syn.request({
         Method = "POST",
         Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.SBTest),
+        Headers = {
+            ["Content-Type"] = "text/plain"
+        },
         Body = EncryptedMessage
     }).Body
 
@@ -75,6 +78,9 @@ local function SendEncryptedAES(Message)
     local Response = syn.request({
         Method = "POST",
         Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.AESTest),
+        Headers = {
+            ["Content-Type"] = "text/plain"
+        },
         Body = HttpService:JSONEncode({Nonce, EncryptedMessage})
     }).Body
 
