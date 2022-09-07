@@ -25,8 +25,12 @@ Router.post("/", (req, res) => {
 
     // Decrypt
     const CipherText = Buffer.from(req.body, "base64")
-    console.log(CipherText)
-    const DecryptedKey = crypto_box_seal_open(CipherText, KeyPair.publicKey, KeyPair.privateKey).toString()
+    let DecryptedKey 
+    try {
+        DecryptedKey = crypto_box_seal_open(CipherText, KeyPair.publicKey, KeyPair.privateKey).toString()
+    } catch (e: any) {
+        return res.status(400).send(e.message)
+    }
 
     // Store
     Keys.push({
