@@ -1,5 +1,11 @@
+-- // Services
 local HttpService = game:GetService("HttpService")
+
 -- // Vars
+local Formatting = {
+    GotServerPK = "Got server public key as the following:\nB64: %s\nDecoded: %s\n",
+    KeyExchangeError = "Unable to perform key exchange. Error: %s\n"
+}
 local ServerConfiguration = {
     Host = "localhost",
     PublicKey = "pk", -- // the path to the public key (on server)
@@ -10,11 +16,12 @@ local ServerConfiguration = {
 
 -- // Grabs the server public key
 local URLFormat = "http://%s:3000/v1/%s"
-local ServerPK = syn.request({
+local _ServerPK = syn.request({
     Method = "GET",
     Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.PublicKey)
 }).Body
-ServerPK = syn.crypt.base64.decode(ServerPK)
+local ServerPK = syn.crypt.base64.decode(_ServerPK)
+rconsoleinfo(Formatting.GotServerPK:format(_ServerPK, ServerPK))
 
 -- // Generate our shared key with 256 bit length
 local Key = syn.crypt.random(32)
@@ -23,7 +30,7 @@ local Key = syn.crypt.random(32)
 local SealedKey = syn.crypt.base64.encode(syn.crypt.seal.encrypt(Key, ServerPK))
 
 -- // Send the key to the server
-syn.request({
+local ExchangeResponse = syn.request({
     Method = "POST",
     Url = URLFormat:format(ServerConfiguration.Host, ServerConfiguration.KeyExchange),
     Headers = {
@@ -31,6 +38,9 @@ syn.request({
     },
     Body = SealedKey
 })
+if (not ExchangeResponse.Success) then
+    return rconsoleerr(Formatting.KeyExchangeError:format(ExchangeResponse.Body))
+end
 
 -- // The server then decrypts the sealed box and has our shared key.
 -- // We can then use this shared key to derive other things, or use in other things.
