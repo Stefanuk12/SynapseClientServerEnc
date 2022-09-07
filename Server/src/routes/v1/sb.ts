@@ -28,8 +28,9 @@ Router.post("/", (req, res) => {
 
     // Reverse it, encrypt and send
     const Reversed = Message.split("").reverse().join("")
-    const Encrypted = crypto_secretbox_easy(Reversed, Nonce, Key.Key, "base64")
+    const Encrypted = crypto_secretbox_easy(Reversed, Nonce, Key.Key, "uint8array")
+    const Encrypted64 = Buffer.from(Encrypted).toString("base64")
 
     // Success, return string reversed
-    return res.send(Encrypted)
+    return res.send(Encrypted64)
 })

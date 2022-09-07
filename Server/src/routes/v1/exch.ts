@@ -13,7 +13,7 @@ Router.use(SynapseOnly)
 
 // Vars
 interface Key {
-    Key: Uint8Array
+    Key: Buffer
     IP: string
 }
 export const Keys: Key[] = []
@@ -25,7 +25,6 @@ Router.post("/", (req, res) => {
         return res.status(400).send("already registered")
 
     // Decrypt
-    console.log(req.body)
     const CipherText = Buffer.from(req.body, "base64")
     let DecryptedKey: Uint8Array 
     try {
@@ -36,7 +35,7 @@ Router.post("/", (req, res) => {
 
     // Store
     Keys.push({
-        Key: DecryptedKey,
+        Key: Buffer.from(DecryptedKey),
         IP: req.ip
     })
 
