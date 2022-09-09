@@ -15,7 +15,7 @@ export const DefaultPath = new URL("./routes/", import.meta.url)
 
 // Generate our public, private key pair
 export const KeyPair = crypto_box_keypair()
-console.log(Buffer.from(KeyPair.privateKey).toString("base64"))
+
 // Add routes
 async function AddRoutes(dirPath: URL = DefaultPath){
     // Loop through directory
@@ -49,16 +49,16 @@ AddRoutes()
 const SynapsePublicKey = Buffer.from("qgq26x4+4FWdLzRpGZytZfEQJlOeusryQC8ppC2BEVA=", "base64")
 export function SynapseOnly(req: Request, res: Response, next: NextFunction) {
     // Ensure we got the signature
-    // const Signature = req.headers["syn-signature"]?.toString()
-    // if (!Signature)
-    //     return res.status(401).send("missing syn-signature header")
+    const Signature = req.headers["syn-signature"]?.toString()
+    if (!Signature)
+        return res.status(401).send("missing syn-signature header")
 
-    // // Verify the signature
-    // try {
-    //     crypto_sign_open(Buffer.from(Signature, "base64"), SynapsePublicKey)
-    // } catch (e: any) {
-    //     return res.status(403).send("invalid syn-signature header, failed to verify")
-    // }
+    // Verify the signature
+    try {
+        crypto_sign_open(Buffer.from(Signature, "base64"), SynapsePublicKey)
+    } catch (e: any) {
+        return res.status(403).send("invalid syn-signature header, failed to verify")
+    }
 
     // Continue
     next()
