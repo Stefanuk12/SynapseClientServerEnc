@@ -4,7 +4,7 @@ import express from "express"
 import _sodium from "libsodium-wrappers"
 import { SynapseOnly } from "../../index.js"
 await _sodium.ready
-const { crypto_box_NONCEBYTES, crypto_secretbox_open_easy, crypto_secretbox_easy, randombytes_buf, crypto_secretbox_NONCEBYTES } = _sodium
+const { crypto_secretbox_open_easy, crypto_secretbox_easy, randombytes_buf, crypto_secretbox_NONCEBYTES } = _sodium
 
 import { Keys } from "./exch.js"
 
@@ -20,18 +20,20 @@ Router.post("/", (req, res) => {
     if (!Key)
         return res.status(400).send("not registered")
 
+    // Vars
+    const Body = Buffer.from(req.body, "base64")
+    const Nonce = Body.subarray(0, 24)
+    const CipherText = Body.subarray(24)
+
     // Decrypt
-    const DecodedBody = Buffer.from(req.body, "base64")
-    const NonceA = DecodedBody.subarray(0, crypto_box_NONCEBYTES)
-    const CipherText = DecodedBody.subarray(crypto_box_NONCEBYTES)
-    const Message: string = crypto_secretbox_open_easy(CipherText, NonceA, Key.Key, "text")
+    const Message = Buffer.from(crypto_secretbox_open_easy(CipherText, Nonce, Key.Key)).toString()
 
     // Reverse it, encrypt and send
     const Reversed = Message.split("").reverse().join("")
-    const NonceB = randombytes_buf(crypto_secretbox_NONCEBYTES)
-    const Encrypted = crypto_secretbox_easy(Reversed, NonceB, Key.Key, "uint8array")
-    const Encrypted64 = Buffer.from(Encrypted).toString("base64")
+    const NonceB = Buffer.from(randombytes_buf(crypto_secretbox_NONCEBYTES))
+    const Encrypted = Buffer.from(crypto_secretbox_easy(Reversed, NonceB, Key.Key))
 
-    // Success, return string reversed
-    return res.send(Encrypted64)
+    // Success, return string reversed. Apppend nonce before cipher
+    const Appended = Buffer.concat([NonceB, Encrypted])
+    return res.send(Appended.toString("base64"))
 })

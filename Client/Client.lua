@@ -46,9 +46,9 @@ end
 -- // We can then use this shared key to derive other things, or use in other things.
 -- // For example, use this key within a secretbox
 
-local function SendEncryptedSB(Message, AdditionalData)
+local function SendEncryptedSB(Message)
     -- // Encrypt with our shared key
-    local EncryptedMessage = syn.crypt.encrypt(Message, Key, AdditionalData)
+    local EncryptedMessage = syn.crypt.encrypt(Message, Key)
 
     -- // Send the request
     local Response = syn.request({
@@ -61,7 +61,7 @@ local function SendEncryptedSB(Message, AdditionalData)
     }).Body
 
     -- // Decrypt the response
-    local DecodedResponse = syn.crypt.decrypt(Response, Key, AdditionalData)
+    local DecodedResponse = syn.crypt.decrypt(Response, Key)
 
     -- // Verify
     return DecodedResponse == Message:reverse()
